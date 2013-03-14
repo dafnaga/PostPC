@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">"Todo List App "</string>
+    <string name="strAdd">"Add"</string>
+    <string name="strDelete">"Delete"</string>
+
+</resources>
