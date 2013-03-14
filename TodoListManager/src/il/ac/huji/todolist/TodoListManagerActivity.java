@@ -79,7 +79,6 @@ public class TodoListManagerActivity extends Activity {
 			deleteClick();
 			break;
 		default:
-			sdfgsdfg
 			return super.onOptionsItemSelected(item);
 		}
 		
