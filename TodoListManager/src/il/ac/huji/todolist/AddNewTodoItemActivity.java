@@ -36,12 +36,12 @@ public class AddNewTodoItemActivity extends Activity {
 				
 		DatePicker datePicker = (DatePicker) findViewById(R.id.datePicker);	
 		
-		Date d = null;
+		Date dueDate = null;
 		Calendar cal = GregorianCalendar.getInstance();
 		cal.set(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth());
-		d = cal.getTime();		
+		dueDate = cal.getTime();		
 		
-		intent.putExtra(TodoListManagerActivity.NEW_ITEM_DUE_DATE, d);
+		intent.putExtra(TodoListManagerActivity.NEW_ITEM_DUE_DATE, dueDate);
 		intent.putExtra(TodoListManagerActivity.NEW_ITEM_TITLE, title);
 		setResult(1, intent);
 		finish();

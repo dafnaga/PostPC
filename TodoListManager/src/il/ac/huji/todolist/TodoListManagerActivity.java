@@ -68,8 +68,8 @@ public class TodoListManagerActivity extends Activity {
 	private TodoListArrayAdapter adapter; 
 	final int NEW_TODO_ITEM_REQUEST = 1;
 	
-	public static final String NEW_ITEM_DUE_DATE = "TodoDueDate";
-	public static final String NEW_ITEM_TITLE = "TodoTitle";
+	public static final String NEW_ITEM_DUE_DATE = "dueDate";
+	public static final String NEW_ITEM_TITLE = "title";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
