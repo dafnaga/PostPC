@@ -41,9 +41,8 @@ public class AddNewTodoItemActivity extends Activity {
 		cal.set(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth());
 		d = cal.getTime();		
 		
-		TodoItem item = new TodoItem(title, d);
-		
-		intent.putExtra(TodoListManagerActivity.NEW_ITEM_INTENT_EXTA, item);
+		intent.putExtra(TodoListManagerActivity.NEW_ITEM_DUE_DATE, d);
+		intent.putExtra(TodoListManagerActivity.NEW_ITEM_TITLE, title);
 		setResult(1, intent);
 		finish();
 	}

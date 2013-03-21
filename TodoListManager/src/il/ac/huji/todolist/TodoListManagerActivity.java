@@ -68,7 +68,8 @@ public class TodoListManagerActivity extends Activity {
 	private TodoListArrayAdapter adapter; 
 	final int NEW_TODO_ITEM_REQUEST = 1;
 	
-	static final public String NEW_ITEM_INTENT_EXTA = "TodoItem";
+	public static final String NEW_ITEM_DUE_DATE = "TodoDueDate";
+	public static final String NEW_ITEM_TITLE = "TodoTitle";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -155,7 +156,8 @@ public class TodoListManagerActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		if (resultCode == 1){
-			todoList.add((TodoItem)data.getSerializableExtra(NEW_ITEM_INTENT_EXTA));
+			TodoItem newItem = new TodoItem((String)data.getSerializableExtra(NEW_ITEM_TITLE),(Date)data.getSerializableExtra(NEW_ITEM_DUE_DATE));
+			todoList.add(newItem);
 			adapter.notifyDataSetChanged();
 		}
 	}
