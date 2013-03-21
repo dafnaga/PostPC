@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:theme="@android:style/Theme.Dialog">
+    
+	<EditText android:id="@+id/edtNewItem"
+	    android:title="@string/strAddTitle"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_centerHorizontal="true"></EditText>
+	
+	<DatePicker
+        android:id="@+id/datePicker"
+        android:calendarViewShown="false"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/edtNewItem"
+        android:layout_centerHorizontal="true" />
+	
+		<Button
+		    android:id="@+id/btnCancel"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:onClick="cancelButtonClicked"
+		    android:text="@string/strCancel" 
+		    android:layout_below="@id/datePicker"></Button>
+		
+		<Button
+		    android:id="@+id/btnOK"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:onClick="okButtonClicked"
+		    android:text="@string/strOk" 
+		    android:layout_below="@id/datePicker"
+		    android:layout_toRightOf="@id/btnCancel"></Button>
+
+</RelativeLayout>

@@ -4,14 +4,6 @@
     android:layout_height="match_parent"
     tools:context=".TodoListManagerActivity" >
 
-    <EditText
-        android:id="@+id/edtNewItem"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:ems="10" >
-    </EditText>
-    
     <ListView android:id="@+id/lstTodoItems"
         	android:layout_below="@id/edtNewItem"
 	        android:layout_height="fill_parent"

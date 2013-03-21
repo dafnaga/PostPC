@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">"Todo List App "</string>
-    <string name="strAdd">"Add"</string>
-    <string name="strDelete">"Delete"</string>
+    <string name="app_name">Todo List App</string>
+    <string name="strAdd">Add</string>
+    <string name="strAddTitle">Add New Item</string>
+    <string name="strCancel">Cancel</string>
+    <string name="strOk">OK</string>
+    <string name="menuItemCallStr">Call</string>
+    <string name="menuItemDeleteStr">Delete Item</string>
+    <string name="menu_settings">Settings</string>
+<!--     <string name="title_activity_add_new_todo_item">AddNewTodoItemActivity</string> -->
+    <string name="title_activity_call">CallActivity</string>
 
 </resources>
