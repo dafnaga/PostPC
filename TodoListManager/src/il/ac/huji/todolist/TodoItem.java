@@ -3,7 +3,7 @@ package il.ac.huji.todolist;
 import java.io.Serializable;
 import java.util.Date;
 
-class TodoItem implements Serializable{
+class TodoItem implements Serializable, ITodoItem{
 	/**
 	 * 
 	 */

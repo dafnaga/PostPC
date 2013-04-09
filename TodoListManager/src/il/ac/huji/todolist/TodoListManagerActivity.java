@@ -6,8 +6,11 @@ import java.util.Date;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -21,29 +24,38 @@ import android.view.ViewGroup;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
 
 public class TodoListManagerActivity extends Activity {
 	
-	class TodoListArrayAdapter extends ArrayAdapter<TodoItem>{
-
-		List<TodoItem> todoListItems;
+	class TodoListCursorAdapter extends SimpleCursorAdapter{
 		
-		public TodoListArrayAdapter(Context context, int resource,
-				List<TodoItem> todoListItems) {
-			super(context, resource, todoListItems);
-			this.todoListItems = todoListItems;
-			// TODO Auto-generated constructor stub
+		
+		public TodoListCursorAdapter(Context context, int resource,
+				Cursor cursor, String[] from, int[] to) {
+			super(context, resource, cursor, from, to); 
 		}
 		
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent){
-			String itemTitle = todoListItems.get(position).getTitle();
-			Date itemDate = todoListItems.get(position).getDueDate();
+			boolean b;
+			
+			Cursor todoListCursor = getCursor();
+			
+			b = todoListCursor.moveToFirst();
+			b = todoListCursor.move(position);
+			
+			int titleIndex = todoListCursor.getColumnIndex(TodoDAL.TODO_ITEM_TITLE_FIELD);
+			int dueIndex = todoListCursor.getColumnIndex(TodoDAL.TODO_ITEM_DUE_FIELD);
+
+			String itemTitle = todoListCursor.getString(titleIndex);
+			Date itemDate = new Date(todoListCursor.getLong(dueIndex));
+			
 			Date currentDate = new Date();
 
-			LayoutInflater inflater = LayoutInflater.from(getContext());
+			LayoutInflater inflater = LayoutInflater.from(getBaseContext());
 			View row = inflater.inflate(R.layout.activity_todo_list_row, null);
 			((TextView)row.findViewById(R.id.txtTodoTitle)).setText(itemTitle);
 			
@@ -64,24 +76,42 @@ public class TodoListManagerActivity extends Activity {
 		}
 	}
 		
-	List<TodoItem> todoList = new ArrayList<TodoItem>();
-	private TodoListArrayAdapter adapter; 
+	private TodoListCursorAdapter adapter; 
 	final int NEW_TODO_ITEM_REQUEST = 1;
 	
 	public static final String NEW_ITEM_DUE_DATE = "dueDate";
 	public static final String NEW_ITEM_TITLE = "title";
+	private TodoDAL todoDal;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_todo_list_manager);
-				
-		adapter = new TodoListArrayAdapter(this, R.layout.activity_todo_list_row, todoList);
+						
 		ListView itemsList = (ListView)findViewById(R.id.lstTodoItems); 
+
+		todoDal = new TodoDAL(this);
+		Cursor cursor = getFreshCursor();
+		
+		String[] from = new String[] {TodoDAL.TODO_ITEM_TITLE_FIELD, TodoDAL.TODO_ITEM_DUE_FIELD};
+		int[] to = new int[] { R.id.txtTodoTitle, R.id.txtTodoDueDate };
+		adapter = new TodoListCursorAdapter(this, R.layout.activity_todo_list_row, cursor, from, to);
 		itemsList.setAdapter(adapter);
-		registerForContextMenu(itemsList);
+		registerForContextMenu(itemsList);		
 	}
 
+	private Cursor getFreshCursor() {
+		// TODO Auto-generated method stub
+		SQLiteDatabase db = todoDal.getWritableDatabase();
+		Cursor cursor = db.query("todo", new String[] {TodoDAL.TODO_ITEM_TITLE_FIELD, TodoDAL.TODO_ITEM_DUE_FIELD, TodoDAL.TODO_ITEM_ID_FIELD}, null, null, null, null, null);
+		return cursor;
+	}
+
+	private void refreshList(){
+		adapter.changeCursor(getFreshCursor());
+		adapter.notifyDataSetChanged();		
+	}
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -100,7 +130,7 @@ public class TodoListManagerActivity extends Activity {
 	    AdapterContextMenuInfo info = (AdapterContextMenuInfo)menuInfo;
 	    int position = info.position;
 	    
-	    String itemTitle = ((TodoItem)(list.getItemAtPosition(position))).getTitle();
+	    String itemTitle = ((Cursor)(list.getItemAtPosition(position))).getString(0);
 	    menu.setHeaderTitle(itemTitle);
 	    
 	    if (!itemTitle.startsWith("Call ")){
@@ -157,21 +187,20 @@ public class TodoListManagerActivity extends Activity {
 		super.onActivityResult(requestCode, resultCode, data);
 		if (resultCode == 1){
 			TodoItem newItem = new TodoItem((String)data.getSerializableExtra(NEW_ITEM_TITLE),(Date)data.getSerializableExtra(NEW_ITEM_DUE_DATE));
-			todoList.add(newItem);
-			adapter.notifyDataSetChanged();
+			todoDal.insert(newItem);
+			refreshList();
 		}
 	}
 
 	
 	public void deleteClick(int position){
-		try{
-			TodoItem item = (TodoItem)((ListView)findViewById(R.id.lstTodoItems)).getItemAtPosition(position);
-			todoList.remove(item);
-			adapter.notifyDataSetChanged();
-		}
-		catch(Exception e){
-			// do nothing
-		}
+			Cursor item = (Cursor)((ListView)findViewById(R.id.lstTodoItems)).getItemAtPosition(position);
+			String title = item.getString(0);
+			Date date = new Date(item.getLong(1));
+			
+			TodoItem todoItem = new TodoItem(title, date);
+			todoDal.delete(todoItem);
+			refreshList();
 	}
 	
 	public void callClick(int position){

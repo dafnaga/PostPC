@@ -39,7 +39,7 @@ public class AddNewTodoItemActivity extends Activity {
 		Date dueDate = null;
 		Calendar cal = GregorianCalendar.getInstance();
 		cal.set(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth());
-		dueDate = cal.getTime();		
+		dueDate = cal.getTime();
 		
 		intent.putExtra(TodoListManagerActivity.NEW_ITEM_DUE_DATE, dueDate);
 		intent.putExtra(TodoListManagerActivity.NEW_ITEM_TITLE, title);
