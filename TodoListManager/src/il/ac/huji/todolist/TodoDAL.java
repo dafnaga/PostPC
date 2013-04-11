@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONObject;
+
 import com.parse.Parse;
 import com.parse.ParseQuery;
 import com.parse.PushService;
@@ -23,7 +25,7 @@ public class TodoDAL extends SQLiteOpenHelper {
 	  
 	  public TodoDAL(Context context) {
 	    super(context, "todo_db", null, 1);
-	    Parse.initialize(context, "xglxRlDpfJtqpvcCvuaHRJmcUDMK36OCSXoqUr5n", "G9tAnMnl8iRosCHECRcCZdtm99lnDH64mzGyIQDT");
+	    Parse.initialize(context, context.getString(R.string.parseApplication), context.getString(R.string.clientKey));
 	  }
 	  
 	  public void onCreate(SQLiteDatabase db) {
@@ -40,16 +42,25 @@ public class TodoDAL extends SQLiteOpenHelper {
 		  
 		  ContentValues todoItemDB = new ContentValues();
 		  todoItemDB.put(TODO_ITEM_TITLE_FIELD, item.getTitle());
-		  todoItemDB.put(TODO_ITEM_DUE_FIELD, item.getDueDate().getTime());
+		  if (item.getDueDate() == null){
+			  todoItemDB.putNull(TODO_ITEM_DUE_FIELD);
+		  } else {
+			  todoItemDB.put(TODO_ITEM_DUE_FIELD, item.getDueDate().getTime());
+		  }
+		  
+
 		  
 		  long r = db.insert(TODO_ITEMS_TABLE, null, todoItemDB);
 		  if (r == -1){
 			  System.out.println("Error inserting to db\n");
+			  return false;
 		  }
 		  
 		  ParseObject itemParseObject = new ParseObject("todo");
 		  itemParseObject.put(TODO_ITEM_TITLE_FIELD, item.getTitle());
-		  itemParseObject.put(TODO_ITEM_DUE_FIELD, item.getDueDate().getTime());
+		  if (item.getDueDate() != null){
+			  itemParseObject.put(TODO_ITEM_DUE_FIELD, item.getDueDate().getTime());			 
+		  }
 		  try {
 			itemParseObject.save();
 		} catch (ParseException e) {
@@ -66,6 +77,7 @@ public class TodoDAL extends SQLiteOpenHelper {
 		  long r = db.delete(TODO_ITEMS_TABLE, "title = ?", new String[] {todoItem.getTitle()});
 		  if (r == -1){
 			  System.out.println("Error inserting to db\n");
+			  return false;
 		  }
 		  
 		  ParseQuery query = new ParseQuery("todo");
@@ -89,12 +101,30 @@ public class TodoDAL extends SQLiteOpenHelper {
 		  try {
 			items = query.find();
 			ParseObject todoParseObj = items.get(0);
-			todoParseObj.put(TODO_ITEM_TITLE_FIELD, todoItem.getTitle());			 
-			todoParseObj.put(TODO_ITEM_DUE_FIELD, todoItem.getDueDate().getTime());
+			//bhtodoParseObj.put(TODO_ITEM_TITLE_FIELD, todoItem.getTitle());
+			if (todoItem.getDueDate() == null){
+				todoParseObj.remove(TODO_ITEM_DUE_FIELD);
+			} else { 
+				todoParseObj.put(TODO_ITEM_DUE_FIELD, todoItem.getDueDate().getTime());
+			}
 			todoParseObj.save();
 		} catch (ParseException e) {
 			return false;
 		}
+		  
+		  SQLiteDatabase db = this.getWritableDatabase();
+		  ContentValues todoItemDB = new ContentValues();
+		  todoItemDB.put(TODO_ITEM_TITLE_FIELD, todoItem.getTitle());
+		  if (todoItem.getDueDate() == null){
+			  todoItemDB.putNull(TODO_ITEM_DUE_FIELD);
+		  } else {
+			  todoItemDB.put(TODO_ITEM_DUE_FIELD, todoItem.getDueDate().getTime());
+		  }
+		  
+		  int r = db.update("todo", todoItemDB, TODO_ITEM_TITLE_FIELD + "= ?" , new String[] {todoItem.getTitle()});
+		  if (r == -1){
+			  return false;
+		  }
 		  return true;
 	  }
 	  
@@ -108,7 +138,12 @@ public class TodoDAL extends SQLiteOpenHelper {
 			items = query.find();
 			
 			for (ParseObject itemObj : items){
-				TodoItem todoItem = new TodoItem(itemObj.getString(TODO_ITEM_TITLE_FIELD), new Date(itemObj.getLong(TODO_ITEM_DUE_FIELD)));
+				TodoItem todoItem;
+				if(itemObj.has(TODO_ITEM_DUE_FIELD)){
+					todoItem = new TodoItem(itemObj.getString(TODO_ITEM_TITLE_FIELD), new Date(itemObj.getLong(TODO_ITEM_DUE_FIELD)));					
+				} else {
+					todoItem = new TodoItem(itemObj.getString(TODO_ITEM_TITLE_FIELD), null);
+				}
 				todoList.add(todoItem);
 			}
 			

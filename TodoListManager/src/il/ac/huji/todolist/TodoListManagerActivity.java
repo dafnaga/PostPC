@@ -39,19 +39,22 @@ public class TodoListManagerActivity extends Activity {
 		}
 		
 		@Override
-		public View getView(int position, View convertView, ViewGroup parent){
-			boolean b;
-			
+		public View getView(int position, View convertView, ViewGroup parent){			
 			Cursor todoListCursor = getCursor();
 			
-			b = todoListCursor.moveToFirst();
-			b = todoListCursor.move(position);
+			todoListCursor.moveToFirst();
+			todoListCursor.move(position);
 			
 			int titleIndex = todoListCursor.getColumnIndex(TodoDAL.TODO_ITEM_TITLE_FIELD);
 			int dueIndex = todoListCursor.getColumnIndex(TodoDAL.TODO_ITEM_DUE_FIELD);
 
 			String itemTitle = todoListCursor.getString(titleIndex);
-			Date itemDate = new Date(todoListCursor.getLong(dueIndex));
+			Date itemDate;
+			if (todoListCursor.isNull(dueIndex)){
+				itemDate = null;
+			} else {
+				itemDate = new Date(todoListCursor.getLong(dueIndex));
+			}
 			
 			Date currentDate = new Date();
 
@@ -97,7 +100,7 @@ public class TodoListManagerActivity extends Activity {
 		int[] to = new int[] { R.id.txtTodoTitle, R.id.txtTodoDueDate };
 		adapter = new TodoListCursorAdapter(this, R.layout.activity_todo_list_row, cursor, from, to);
 		itemsList.setAdapter(adapter);
-		registerForContextMenu(itemsList);		
+		registerForContextMenu(itemsList);	
 	}
 
 	private Cursor getFreshCursor() {

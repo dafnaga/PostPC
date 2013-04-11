@@ -8,8 +8,8 @@ class TodoItem implements Serializable, ITodoItem{
 	 * 
 	 */
 	private static final long serialVersionUID = -7910164253737970421L;
-	String todoTitle;
-	Date dueDate;
+	private String todoTitle;
+	private Date dueDate;
 	
 	public TodoItem(){
 		todoTitle = "";
