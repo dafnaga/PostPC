@@ -11,6 +11,7 @@ import com.parse.ParseQuery;
 import com.parse.PushService;
 import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParseUser;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -26,6 +27,7 @@ public class TodoDAL extends SQLiteOpenHelper {
 	  public TodoDAL(Context context) {
 	    super(context, "todo_db", null, 1);
 	    Parse.initialize(context, context.getString(R.string.parseApplication), context.getString(R.string.clientKey));
+		ParseUser.enableAutomaticUser();
 	  }
 	  
 	  public void onCreate(SQLiteDatabase db) {
